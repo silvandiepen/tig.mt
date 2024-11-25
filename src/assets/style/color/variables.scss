@@ -1,0 +1,71 @@
+@use "sass:map";
+@use "sass:list";
+@use "sass:color";
+
+@function rotateColor($color, $amount) {
+  $adjustedColor: color.adjust($color, $hue: $amount);
+  @return $adjustedColor;
+}
+// Base Colors
+$base-colors: (
+  "purple": #ad8acc,
+  "blue": #7bcdff,
+  "green": #4fcf4f,
+  "lime": #8aff84,
+  "yellow": #ffe34b,
+  "orange": #f6a53a,
+  "red": #ff4d5e,
+  "pink": #ea7f9a,
+  "brown": #a3756b,
+  "gray": #b0b0b0,
+  "black": #111111,
+  "white": #ffffff,
+  "turquoise": #63d4c7,
+  "cyan": #baf0ff,
+  "indigo": #571ab4,
+  "violet": #dfbaff,
+  "magenta": #e524b5,
+  "rose": #ff7dff,
+  "coral": #ff7d7d,
+  "gold": #ffd700,
+  "silver": #c0c0c0,
+  "bronze": #cd7f32,
+);
+
+$base-color-names: map.keys($base-colors);
+
+$primary-color: map.get($base-colors, "blue");
+// Project Colors
+$colors: (
+  "dark": #181327,
+  "light": #ffffff,
+  "accent-dark": rgb(0, 0, 0),
+  "accent-light": #f1eede,
+  primary: rotateColor($primary-color, 0deg),
+  secondary: rotateColor($primary-color, 45deg),
+  tertiary: rotateColor($primary-color, 90deg),
+  quaternary: rotateColor($primary-color, 180deg),
+  //
+  "success": map.get($base-colors, "green"),
+  "warning": map.get($base-colors, "orange"),
+  "error": map.get($base-colors, "red"),
+  "info": map.get($base-colors, "blue"),
+);
+
+$color-names: map.keys($colors);
+
+// Theme Colors
+
+$theme-colors: (
+  background: var(--light),
+  foreground: var(--dark),
+);
+$theme-color-names: map.keys($theme-colors);
+
+// All Colors
+$all-colors: map.merge($base-colors, $colors, $theme-colors);
+$all-color-names: list.join(
+  $base-color-names,
+  list.join($color-names, $theme-color-names, comma),
+  comma
+);

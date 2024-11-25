@@ -1,0 +1,40 @@
+@use "functions" as cf;
+@use "variables";
+
+:root {
+  @each $color, $value in variables.$colors {
+    --#{$color}: #{$value};
+    @include cf.hslColors($color, $value);
+    @include cf.rgbColors($color, $value);
+    --#{$color}-text: var(--#{darkOrLight($value)});
+  }
+  @each $color-name, $color-value in variables.$base-colors {
+    --#{$color-name}: #{$color-value};
+    @include cf.hslColors($color-name, $color-value);
+    @include cf.rgbColors($color-name, $color-value);
+    --#{$color-name}-text: var(--#{darkOrLight($color-value)});
+  }
+
+  --space: 1em;
+  --space-s: calc(var(--space) / 2);
+  --spacing: clamp(2em, 8vw, 6em);
+  --border-radius: 0.5em;
+  --spacing: clamp(2em, 8vw, 6em);
+  --bezier: cubic-bezier(0, 0.75, 0.5, 1.5);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    @include cf.darkModeBase();
+  }
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    @include cf.lightModeBase();
+  }
+}
+[data-color-mode="dark"] {
+  @include cf.darkModeBase();
+}
+[data-color-mode="light"] {
+  @include cf.lightModeBase();
+}

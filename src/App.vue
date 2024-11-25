@@ -1,20 +1,13 @@
 <script setup lang="ts">
+import Intro from '@/components/Intro.vue';
 </script>
 
 <template>
-  <div>
-   tig<span>.mt</span>
-  </div>
+<main>
+  <Intro></Intro>
+</main>
 </template>
 
-<style lang="scss">
-  div {
-    font-weight: bold;
-    font-size: clamp(1.5em, 6vw, 5em);
-    span{
-      // opacity: .25;
-      font-weight: 400;
-      color: #ffae00;
-    }
-  }
+<style lang="scss" src="@/assets/style/app.scss">
+
 </style>

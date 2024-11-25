@@ -1,0 +1,104 @@
+@use "sass:color";
+@use "sass:map";
+@use "variables";
+
+@function toRgbString($color) {
+  @return color.channel($color,"red"), color.channel($color,"green"), color.channel($color, "blue");
+}
+
+@function values($color-value) {
+  $value: map.get(variables.$colors, $color-value);
+  @return toRgbString($value);
+}
+
+@function darkOrLight($color) {
+  @return if(color.channel($color,"lightness", $space: hsl) > 50, "dark", "light");
+}
+
+@function setLightness($color-name, $lightness) {
+  @return hsla(var(--#{$color-name}-h), var(--#{$color-name}-s), $lightness, 1);
+}
+
+@mixin hslColors($color, $value) {
+  --#{$color}-h: #{color.channel($value,"hue", $space: hsl)};
+  --#{$color}-s: #{color.channel($value,"saturation", $space: hsl)};
+  --#{$color}-l: #{color.channel($value,"lightness", $space: hsl)};
+}
+@mixin rgbColors($color, $value) {
+  --#{$color}-r: #{color.channel($value,"red")};
+  --#{$color}-g: #{color.channel($value,"green")};
+  --#{$color}-b: #{color.channel($value,"blue")};
+}
+
+@mixin darkModeBase {
+  --background: var(--dark);
+  --background-text: var(--light);
+  --foreground: var(--light);
+  --foreground-text: var(--dark);
+  --accent: var(--accent-dark);
+  --accent-text: var(--accent-dark-text);
+  @include hslColors("accent", map.get(variables.$colors, "accent-dark"));
+}
+@mixin lightModeBase {
+  --background: var(--light);
+  --background-text: var(--dark);
+  --foreground: var(--dark);
+  --foreground-text: var(--light);
+  --accent: var(--accent-light);
+  --accent-text: var(--accent-light-text);
+  @include hslColors("accent", map.get(variables.$colors, "accent-light"));
+}
+
+@function darkenVar($var: --primary, $amount: 10%) {
+  @return color-mix(in oklab, var($var), black, $amount);
+}
+
+@function darken($var: --primary, $amount: 10%) {
+  @return color-mix(in oklab,  var(--#{$var}), black, $amount);
+}
+
+@function lightenVar($var: --primary, $amount: 10%) {
+  @return color-mix(in oklab,  var($var), white $amount);
+}
+
+@function lighten($var, $amount: 10%) {
+  @return color-mix(in oklab,  var(--#{$var}), white, $amount);
+}
+
+@mixin setContrastText($color, $amount) {
+  @media (prefers-color-scheme: dark) {
+    --contrast-text: #{lightenVar($color, $amount)};
+    [data-color-mode="dark"] & {
+      --contrast-text: #{lightenVar($color, $amount)};
+    }
+    [data-color-mode="light"] & {
+      --contrast-text: #{darkenVar($color, $amount)};
+    }
+  }
+  @media (prefers-color-scheme: light) {
+    --contrast-text: #{darkenVar($color, $amount)};
+    [data-color-mode="dark"] & {
+      --contrast-text: #{lightenVar($color, $amount)};
+    }
+    [data-color-mode="light"] & {
+      --contrast-text: #{darkenVar($color, $amount)};
+    }
+  }
+}
+
+
+@function opacity($color, $amount) {
+  // Check if amount is a percentage. Then do 100% - percentage. Otherwise if a decimal, make it a percentage.
+  @if unitless($amount) {
+    $amount: percentage($amount);
+  }
+  $amount: calc(100% - #{$amount});
+
+  @return color-mix(in srgb, transparent $amount, var(--#{$color}));
+}
+
+
+// @function rotateColor($color, $amount) {
+//   @debug 'test';
+//   @return color.adjust($color, $hue: $amount);
+// }
